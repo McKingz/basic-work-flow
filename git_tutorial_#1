@@ -1,0 +1,85 @@
+GIT/GITHUB COMMANDS
+ADD YOUR GIT CREDENTIALS WITH THE FOLLOWING COMMAND
+* git config --global user.name "Your github user name"
+* git config --global user.email "Your github email"
+
+IF YOU WANT TO EDIT THESE FILES, OPEN UP:
+* ~/.gitconfig "With your favourite editor and follow this example"
+* [user]
+	name = McKingz
+	email = king.judaah@gmail.com
+* [core]
+	editor = vim
+	whitespace = off
+	excludesfile = ~/.gitignore
+            autocrlf = input
+	    safecrlf = true
+* [advice]
+	statusuoption = false
+* [color]
+	ui = true
+* [push]
+
+CHECK TO SEE IF YOU HAVE AN (SSH KEY) ON YOUR COMPUTER WITH THE FOLLOWING COMMAND
+* ls -la ~/.ssh | grep id_rsa (IF YOU DONT HAVE ONE, CREATE WITH THIS COMMAND)
+* cd ~ && ssh-keygen -t RSA (THEN COPY AND PASTE THE PUBLIC SSH KEY INTO YOUR GITHUB ACCOUNT "SETTINGS SSH & GPG KEYS"
+* cat ~/.ssh/id_rsa.pub
+CLONING REMOTE REPOSITORY
+git clone git@github.com:McKingz/basic-git-tutorial.git
+CHECK REMOTE REPOSITORY
+* git remote -v
+
+TO SETUP A REPO MANNUALY, CREATE A NEW DIRECTORY FOR YOUR REPO
+* mkdir git-tutorial-manual
+ cd git-tutorial-manual
+ git init
+ git remote add origin
+ git@github.com:McKingz/basic-git-tutorial.git
+
+NOW CREATE FOLDERS AND FILES TO WORK WITH 
+* mkdir source-code
+  touch source-code/index.html
+  touch README.md
+
+NOW ADD A SIMPLE HTML BOILERPLATE CODE TO INDEX.HTML FILE
+* <!-- index.html -->
+<html>
+	<head>
+		<title>Basic Webpage</title>
+	</head>
+	<body>
+		<h1>Hello World</h1>
+	</body>
+	<footer></footer>
+</html>
+
+ADD ANYTHING YOU WANT INTO THE README.md FILE
+
+#1 ADD EACH FILE INDIVIDUALLY
+* git add source-code/index.html
+  git add README.md
+
+#2 ADD ALL FILES IN CURRENT DIRECTORY
+* git add .
+
+NOW RUN THE FOLLOWING COMMAND
+
+* git status
+
+NOW COMMIT TO YOUR LOCAL MACHINE
+* git commit -m "My first commit"
+
+NOW PUSH YOUR COMMIT TO REMOTE REPO
+* git push origin master
+
+SHOULD YOU MAKE ANY CHANGES TO THE FILES YOU PUSHED 'UPSTREAM' BEFORE YOU DO ANY WORK ON THE LOCAL REPO YOU SHOULD HAVE TO PULL THE REPO FROM THE REMOTE REPOSITORY BEFORE YOU CAN DO ANY WORK ON THE LOCAL REPO.
+* git pull origin master remote
+
+From here, you will continue to go through this process indefinitely.
+
+    Make changes
+    Stage changes (git add)
+    Commit changes (git commit)
+    Push changes (git push)
+    Pull changes if necessary (git pull)
+    Repeat

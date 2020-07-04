@@ -1,0 +1,130 @@
+A simple workflow for small teams
+
+In this workflow, we have three branches:
+
+    Master — This branch will have production code only. In other words, anything you push to the master branch better be free of bugs.
+    Develop — This branch will be the “live” version of your software. If you are working on a team, this is the branch that developers will push to on a regular basis with new features.
+    Feature — This technically is not a single branch because there can be tens, or even hundreds of outstanding feature branches at a given moment depending on the team size. Each feature branch represents a new chunk of code that will eventually be tested and added to the codebase.
+
+The basic steps in this flow are as follows:
+
+    Create a new branch from the develop branch and call it something like “feature-<describe feature here, or give it an ID>”
+    Work on your feature, committing to this feature branch
+    Test your feature
+    Merge your feature into the develop branch
+    Delete your feature branch
+    Once enough features have been added, prepare your release
+    When the release is tested and prepped, merge the develop branch into master
+    Tag the master branch commit to the correct version (i.e. v1.1)
+    Repeat
+
+you will learn the following topics:
+
+    Creating branches
+    Switching between branches
+    Merging two branches
+    Understanding upstream vs. downstream
+    Tagging commits (for releases on master branch)
+
+Let’s first set up a new repo, add some files, commit the files, and push them “upstream” to our remote repo.
+
+git init 
+git remote add origin git@github.com:zachgoll/basic-git-workflow.gittouch index.html
+echo "<html><head><title>Simple Webpage</title></head><body><h1>Hello World</h1></body></html>" > index.htmltouch README.md
+echo "This repository will show you a basic git workflow for individuals or small teams" > README.mdgit add index.html README.mdgit commit -m "First commit"git push origin master
+
+Let’s now add a License to this repository. I will add an MIT license, which is common for open source projects.
+
+touch LICENSE
+
+Copy the following text into LICENSE.
+
+Copyright 2019 Zach GollwitzerPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Stage, commit and push “upstream” to your remote repo.
+
+git add LICENSE
+git commit -m "Add license to project"
+git push origin master
+
+Since we committed to the master branch, we will need to tag this first commit as “v1.0”. First, we will see what tags already exist in our repository:
+
+git tag
+
+This should not return anything because we have not tagged anything yet. To add a tag, we will run the following command.
+
+git tag -a v1.0 -m "Added first tag"
+
+The -a stands for an "annotated tag", and v1.0 is the actual tag. With an annotated tag, we need to add a message to our tag. We can then see the details of this tag by typing:
+
+git show v1.0
+
+This will show who made the tag, the date of the tag, and the message of the tag along with other information. Let’s push this up to Github.
+
+git push --tags origin master
+
+Since we haven’t added anything since our last push, we must use the --tags flag to only push the new tag. This worked easily because we were on both the branch and the commit that we wanted to tag. We will come back to this topic later with a bit more complicated example.
+
+Now that we have a production release, we cannot continue to commit code to the master branch. Code needs to be tested and reviewed before releasing to production, so it is best that we do all of our development on a new branch. Let’s first look at what branches are already in our repository.
+
+git branch --list# * master
+
+All you should see is the master branch. To create a “develop” branch with the exact code that is in the master branch already, we will run the following command.
+
+git branch develop# Now run the list command again
+git branch --list # develop, * master
+
+At this point, we have two branches (master, develop) and two commits. Before things start getting convoluted in our heads, let’s take a moment to visualize what is going on. Type the following command to list out all the commits we have done.
+
+git log# Could also run 
+git log --pretty=oneline
+
+This will print out the following:
+
+Author: Zach Gollwitzer <email hidden for confidentiality>
+Date:   Mon Mar 11 17:12:28 2019 +0000    Add license to projectcommit 7087a7eeab6803e957c3d9468e9f7a17d5043a05
+Author: Zach Gollwitzer <email hidden for confidentiality>
+Date:   Mon Mar 11 17:11:49 2019 +0000    First commit
+
+The alternative “pretty” command will output:
+
+ccb5d8e8c35364f2c98fb9f380404697973e11e8 (HEAD -> master, tag: v1.0, origin/master, develop) Add license to project
+7087a7eeab6803e957c3d9468e9f7a17d5043a05 First commit
+
+Notice how in the second version of the command, we see (HEAD -> master, tag: v1.0, origin/master, develop). What does all this mean? To answer that question, we need to understand what branches are and how they work. Currently, our Git repository looks like this:
+
+REFER TO GIT_BRANCHING_FIG-1
+
+At its essence, Git is a tool that uses pointers to track “snapshots” of files. In our diagram, the arrows represent where each pointer points to. The two commits are abbreviated to just their first six characters. You can see that the latest commit points to the previous commit, and both the develop and master branches both point to the most recent commit. But what is the HEAD box represent?
+
+Understanding what the HEAD pointer does is paramount to understanding Git. The HEAD pointer will always be pointing at something, and whatever it is pointing at is the snapshot that you are currently working in. In this case, we see that HEAD is pointing at master which is pointing at the most recent commit. Yes, we created the develop branch just a moment ago, but HEAD is still pointing at master, which means that any changes that we stage and commit will be on the master branch. Let's switch to the develop branch because we do not want to make changes to our "production" release v1.0.
+
+git checkout develop
+
+REFER TO GIT_BRANCH_FIG-2
+
+As you can see in the diagram, this command has told the HEAD pointer to point at this new develop branch. Now, anything we change in the repository will be updated on this developbranch. Let's go ahead and update our HTML file with some CSS.
+
+<html>
+    <head>
+        <title>Simple Webpage</title>
+        <style>            body {
+                font-family: monospace;
+                color: navy;
+                padding: 40px;
+            }            .header {
+                font-weight: 500;
+            }        </style>
+    </head>
+    <body>
+        <h1 class="header">Hello World</h1>
+        <br>
+        <p>Welcome to the Git Tutorial</p>
+    </body>
+</html>
+
+Now, stage, commit, and push these changes.
+
+git add index.html
+git commit -m "Add CSS to HTML"
+git push origin develop
